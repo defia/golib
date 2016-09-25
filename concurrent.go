@@ -23,8 +23,8 @@ func (l *ConcurrentLimitWaitGroup) Start() {
 }
 
 func (l *ConcurrentLimitWaitGroup) End() {
-	l.wg.Done()
 	<-l.ch
+	l.wg.Done()
 }
 
 func (l *ConcurrentLimitWaitGroup) Wait() {
