@@ -38,7 +38,7 @@ func main() {
 	fmt.Println(`}`)
 }
 
-var numRegexp = regexp.MustCompile(`[0-9]+`)
+var numRegexp = regexp.MustCompile(`^[0-9]+$`)
 
 const fmtStr = "    %s %s `form:\"%s\"`"
 
