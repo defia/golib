@@ -22,7 +22,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	data = string(b)
+	data = strings.Replace(string(b), "\n", "", -1)
+	data = strings.Replace(data, "\r", "", -1)
+
 	values, err := url.ParseQuery(data)
 	if err != nil {
 		log.Fatal(err)
