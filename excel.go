@@ -21,6 +21,9 @@ func ParseExcel(filename, sheetname string, headerLine int, obj interface{}) err
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i) //获取结构体的每一个字段
 		tag := field.Tag.Get("h")
+		if tag == "" {
+			tag = field.Name
+		}
 		// fmt.Printf("%d. %v (%v), tag: '%v'\n", i+1, field.Name, field.Type.Name(), tag)
 		m[tag] = field.Name
 	}
@@ -44,11 +47,14 @@ func ParseExcel(filename, sheetname string, headerLine int, obj interface{}) err
 				for i, cell := range row.Cells {
 
 					header := strings.TrimSpace(cell.String())
+					log.Println(header)
 					if v, has := m[header]; has {
 						indecColumnMap[i] = v
 					}
 
 				}
+				// spew.Dump(indecColumnMap)
+				// spew.Dump(m)
 			} else {
 				newobj := reflect.New(t)
 				for index, fieldName := range indecColumnMap {
@@ -59,7 +65,7 @@ func ParseExcel(filename, sheetname string, headerLine int, obj interface{}) err
 						tempint := row.Cells[index].String()
 						i, err := strconv.Atoi(tempint)
 						if err != nil {
-							log.Println("line：" + strconv.Itoa(i+1) + " column:" + strconv.Itoa(index+1) + " int error:" + tempint)
+							log.Println("line：" + strconv.Itoa(j+1) + " column:" + strconv.Itoa(index+1) + " int error:" + tempint)
 						}
 						field.SetInt(int64(i))
 					case reflect.String:
