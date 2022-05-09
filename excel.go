@@ -1,7 +1,6 @@
 package golib
 
 import (
-	"fmt"
 	"log"
 	"reflect"
 	"strconv"
@@ -14,8 +13,8 @@ func ParseExcel(filename, sheetname string, headerLine int, obj interface{}) err
 	arrobj := reflect.ValueOf(obj).Elem()
 
 	t := reflect.TypeOf(obj).Elem().Elem().Elem()
-	fmt.Println("Type:", t.Name())
-	fmt.Println("Kind:", t.Kind())
+	// fmt.Println("Type:", t.Name())
+	// fmt.Println("Kind:", t.Kind())
 	m := make(map[string]string)
 
 	for i := 0; i < t.NumField(); i++ {
@@ -40,32 +39,38 @@ func ParseExcel(filename, sheetname string, headerLine int, obj interface{}) err
 			continue
 		}
 		for j, row := range sheet.Rows {
+
 			if j < headerLine {
 				continue
 			}
 			if j == headerLine {
 				for i, cell := range row.Cells {
 
-					header := strings.TrimSpace(cell.String())
+					header := cell.String()
 					log.Println(header)
 					if v, has := m[header]; has {
 						indecColumnMap[i] = v
 					}
 
 				}
-				// spew.Dump(indecColumnMap)
+				// log.Println(indecColumnMap)
 				// spew.Dump(m)
 			} else {
+				if len(row.Cells) < 0 {
+					continue
+				}
 				newobj := reflect.New(t)
 				for index, fieldName := range indecColumnMap {
-
+					if index >= len(row.Cells) {
+						continue
+					}
 					field := newobj.Elem().FieldByName(fieldName)
 					switch field.Kind() {
 					case reflect.Int:
-						tempint := row.Cells[index].String()
+						tempint := strings.TrimSpace(row.Cells[index].String())
 						i, err := strconv.Atoi(tempint)
 						if err != nil {
-							log.Println("line：" + strconv.Itoa(j+1) + " column:" + strconv.Itoa(index+1) + " int error:" + tempint)
+							log.Println("line："+strconv.Itoa(j+1)+" column:"+strconv.Itoa(index+1)+" int error:"+tempint, err)
 						}
 						field.SetInt(int64(i))
 					case reflect.String:
