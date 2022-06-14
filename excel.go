@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com1/tealeg/xlsx"
+	"github.com/tealeg/xlsx"
 )
 
 func ParseExcel2(sheet *xlsx.Sheet, headerLine int, obj interface{}) error {
